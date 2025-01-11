@@ -128,6 +128,12 @@
     formatLabel(key) {
       return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     },
+    getInputType(key) {
+      return key.includes('email') ? 'email' : key.includes('tanggal') ? 'date' : 'text';
+    },
+    isFieldRequired(key) {
+      return ['nama_depan', 'email', 'no_telepon'].includes(key);
+    },
     async saveAkunDetails() {
       try {
         if (!this.akunDetails.id_detail) {
@@ -162,9 +168,7 @@
     },
     async createDetailAkun() {
       try {
-        // Pastikan id_detail diisi dengan id_akun
         this.akunDetails.id_detail = this.akunDetails.id_akun;
-
         const response = await createDetailAkun(this.akunDetails);
         console.log('Account details created:', response.data);
       } catch (error) {
@@ -203,7 +207,6 @@
           if (akunDetails) {
             Object.assign(this.akunDetails, akunDetails);
           } else {
-            // Jika akunDetails tidak ditemukan, set id_detail sama dengan id_akun
             this.akunDetails.id_detail = this.akunDetails.id_akun;
           }
         } else {
