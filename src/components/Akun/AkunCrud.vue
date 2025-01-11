@@ -360,7 +360,7 @@ form button:hover {
   background-color: #fff;
   position: sticky;
   top: 16px;
-  right: 30px;
+  right: 90px;
   max-height: 200px; /* Menetapkan tinggi maksimal jika perlu */
   overflow-y: auto; /* Menambahkan scroll jika kontennya melebihi tinggi */
 }
