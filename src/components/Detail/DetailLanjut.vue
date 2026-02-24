@@ -15,8 +15,9 @@
   
       <!-- Main Content -->
       <div class="content">
-        <!-- Display list of Detail Akun -->
-        <div v-if="detailAkunList.length > 0">
+        <!-- Admin: Display list of all accounts -->
+        <div v-if="isAdmin && detailAkunList.length > 0">
+          <h3>Daftar Akun</h3>
           <div v-for="(akun, index) in detailAkunList" :key="akun.id_akun" class="account-row">
             <div class="row">
               <div class="label">#</div>
@@ -55,13 +56,33 @@
               <div class="value">{{ new Date(akun.dibuat).toLocaleString() }}</div>
             </div>
             <div class="actions">
+              <button class="btn btn-primary" @click="editAkun(akun)">Edit</button>
               <button class="btn btn-danger" @click="deleteDetailAkun(akun.id_akun)">Delete</button>
             </div>
             <hr />
           </div>
         </div>
-        <div v-else>
-          <p>No account details available.</p>
+  
+        <!-- Edit Form (Always visible - for staff shows only own, for admin shows selected) -->
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ editMode ? 'Edit Akun' : 'Detail Akun' }}</h5>
+            <form @submit.prevent="saveAkunDetails">
+              <div v-for="(value, key) in filteredAkunDetails" :key="key" class="form-group">
+                <label :for="key">{{ formatLabel(key) }}</label>
+                <input 
+                  v-model="akunDetails[key]" 
+                  :id="key" 
+                  :name="key" 
+                  type="text" 
+                  class="form-control"
+                  :placeholder="getPlaceholder(key)"
+                />
+              </div>
+              <button type="submit" class="btn btn-success">{{ editMode ? 'Update' : 'Save' }}</button>
+              <button v-if="editMode" type="button" class="btn btn-secondary" @click="cancelEdit">Cancel</button>
+            </form>
+          </div>
         </div>
   
         <!-- Sidebar (Status Pegawai) -->
@@ -79,8 +100,9 @@
       </div>
     </div>
   </template>  
+  
   <script>
-import { getAllDetailAkun, deleteDetailAkun } from '@/services/bloc/AkunDetailApi';
+import { getAllDetailAkun, getDetailAkun, createDetailAkun, updateDetailAkun, deleteDetailAkun } from '@/services/bloc/AkunDetailApi';
 import { getLevelAkses } from '@/services/bloc/LevelAksesApi';
 import userInfo from '@/services/helpers/UserInfo';
 
@@ -88,10 +110,46 @@ export default {
   data() {
     return {
       dropdownVisible: false,
-      detailAkunList: [], // Store list of account details
+      detailAkunList: [],
       loggedInUser: null,
       accessDetails: { hak_akses: '', priority_akses: '' },
+      editMode: false,
+      hiddenFields: ['id_detail', 'id_akun', 'id_level_akses', 'dibuat', '_id'],
+      akunDetails: {
+        id_detail: '',
+        id_akun: '',
+        nama_depan: '',
+        nama_belakang: '',
+        nik: '',
+        tempat_lahir: '',
+        tanggal_lahir: '',
+        email: '',
+        no_telepon: '',
+        jenis_kelamin: '',
+        agama: '',
+        kewarganegaraan: '',
+        provinsi: '',
+        kabupaten: '',
+        kecamatan: '',
+        kelurahan: '',
+        jalan: '',
+        transportasi: '',
+        id_level_akses: '',
+      },
     };
+  },
+  computed: {
+    isAdmin() {
+      return this.accessDetails.hak_akses === 'admin';
+    },
+    filteredAkunDetails() {
+      return Object.keys(this.akunDetails)
+        .filter(key => !this.hiddenFields.includes(key))
+        .reduce((obj, key) => {
+          obj[key] = this.akunDetails[key];
+          return obj;
+        }, {});
+    }
   },
   methods: {
     toggleDropdown() {
@@ -116,46 +174,144 @@ export default {
       userInfo.logout();
       this.$router.push('/');
     },
+    formatLabel(key) {
+      return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    },
+    getPlaceholder(key) {
+      const placeholders = {
+        nama_depan: 'Masukkan nama depan',
+        nama_belakang: 'Masukkan nama belakang',
+        nik: 'Masukkan NIK',
+        tempat_lahir: 'Masukkan tempat lahir',
+        tanggal_lahir: 'Masukkan tanggal lahir',
+        email: 'Masukkan email',
+        no_telepon: 'Masukkan nomor telepon',
+        jenis_kelamin: 'L/P',
+        agama: 'Masukkan agama',
+        kewarganegaraan: 'Masukkan kewarganegaraan',
+        provinsi: 'Masukkan provinsi',
+        kabupaten: 'Masukkan kabupaten',
+        kecamatan: 'Masukkan kecamatan',
+        kelurahan: 'Masukkan kelurahan',
+        jalan: 'Masukkan jalan',
+        transportasi: 'Masukkan transportasi',
+      };
+      return placeholders[key] || `Masukkan ${key}`;
+    },
     async loadLoggedInUser() {
-        const user = userInfo.getUserInfo();
-        //console.log('User Info:', user); // Debug user info  
-        if (user) {
-          this.loggedInUser = user;
-          // Ambil level akses langsung dari userInfo
-          const idLevelAkses = userInfo.getLevelAkses(); // Tidak perlu panggil getLevelAkses API di sini
-          //console.log('ID Level Akses:', idLevelAkses); // Debug id_level_akses
-          if (idLevelAkses) {
-            try {
-              // Ambil data level akses berdasarkan id_level_akses dari API
-              const accessData = await getLevelAkses(idLevelAkses); // Panggil getLevelAkses dengan idLevelAkses
-              this.accessDetails = accessData; // Simpan data akses
-            } catch (error) {
-              console.error("Error fetching access details:", error);
-            }
-          } else {
-            console.error("id_level_akses is missing");
-            this.accessDetails = { hak_akses: 'N/A', priority_akses: 'N/A' }; // Nilai default jika tidak ada
+      const user = userInfo.getUserInfo();
+      if (user) {
+        this.loggedInUser = user;
+        const idLevelAkses = userInfo.getLevelAkses();
+        if (idLevelAkses) {
+          try {
+            const accessData = await getLevelAkses(idLevelAkses);
+            this.accessDetails = accessData;
+            // After loading access level, load user details
+            await this.loadUserDetails();
+          } catch (error) {
+            console.error("Error fetching access details:", error);
           }
         } else {
-          console.error('User data not found in userInfo');
+          console.error("id_level_akses is missing");
+          this.accessDetails = { hak_akses: 'N/A', priority_akses: 'N/A' };
         }
-      },
-      async fetchDetailAkun() {
+      } else {
+        console.error('User data not found in userInfo');
+      }
+    },
+    async loadUserDetails() {
+      try {
+        const userID = userInfo.getUserID();
+        if (userID) {
+          const detailData = await getDetailAkun(userID);
+          if (detailData) {
+            Object.assign(this.akunDetails, detailData);
+          } else {
+            // Reset to empty if no data exists
+            this.resetAkunDetails();
+            this.akunDetails.id_akun = userID;
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user details:', error);
+        // Reset to empty on error
+        this.resetAkunDetails();
+        this.akunDetails.id_akun = userInfo.getUserID();
+      }
+    },
+    resetAkunDetails() {
+      this.akunDetails = {
+        id_detail: '',
+        id_akun: '',
+        nama_depan: '',
+        nama_belakang: '',
+        nik: '',
+        tempat_lahir: '',
+        tanggal_lahir: '',
+        email: '',
+        no_telepon: '',
+        jenis_kelamin: '',
+        agama: '',
+        kewarganegaraan: '',
+        provinsi: '',
+        kabupaten: '',
+        kecamatan: '',
+        kelurahan: '',
+        jalan: '',
+        transportasi: '',
+        id_level_akses: '',
+      };
+    },
+    async fetchDetailAkun() {
       try {
         const response = await getAllDetailAkun();
-        console.log('Fetched data:', response); // Debugging
-        this.detailAkunList = response; // Menyimpan data yang diambil ke detailAkunList
+        this.detailAkunList = response;
       } catch (error) {
         console.error('Failed to fetch detail akun:', error);
       }
     },
-    async deleteDetailAkun(id) {
+    editAkun(akun) {
+      // Copy selected account data to form
+      Object.assign(this.akunDetails, akun);
+      this.editMode = true;
+    },
+    cancelEdit() {
+      this.editMode = false;
+      this.loadUserDetails();
+    },
+    async saveAkunDetails() {
       try {
-        const response = await deleteDetailAkun(id);
-        console.log('Account deleted:', response);
+        if (!this.akunDetails.id_detail) {
+          // Create new detail
+          await createDetailAkun(this.akunDetails);
+          alert('Akun details created successfully!');
+        } else {
+          // Update existing detail
+          await updateDetailAkun(this.akunDetails.id_akun, this.akunDetails);
+          alert('Akun details updated successfully!');
+        }
+        this.editMode = false;
+        // Refresh the list for admin
+        if (this.isAdmin) {
+          this.fetchDetailAkun();
+        }
+        // Reload user details
+        await this.loadUserDetails();
+      } catch (error) {
+        console.error('Error saving account details:', error);
+        alert('Failed to save account details.');
+      }
+    },
+    async deleteDetailAkun(id) {
+      if (!confirm('Are you sure you want to delete this account?')) return;
+      try {
+        await deleteDetailAkun(id);
+        alert('Account deleted successfully!');
         this.fetchDetailAkun();
       } catch (error) {
         console.error('Error deleting account:', error);
+        alert('Failed to delete account.');
       }
     }
   },

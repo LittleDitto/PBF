@@ -1,5 +1,5 @@
-import axios from 'axios';
-import APIUrl from '@/services/helpers/APIUrl'; // Pastikan file ini merujuk ke lokasi yang tepat
+import api from '@/services/helpers/api';
+import APIUrl from '@/services/helpers/APIUrl';
 
 // Fungsi untuk mengambil detail akun berdasarkan ID
 export const getDetailAkun = async (userID) => {
@@ -17,7 +17,7 @@ export const getDetailAkun = async (userID) => {
     console.log(`Constructed API URL: ${apiUrl}`);
 
     // Attempt to fetch data from the API
-    const response = await axios.get(apiUrl);
+    const response = await api.get(apiUrl);
     console.log('Received account data:', response.data);
     return response.data;
 
@@ -38,7 +38,7 @@ export const getDetailAkun = async (userID) => {
 // Fungsi untuk membuat detail akun
 export const createDetailAkun = async (detailAkun) => {
   try {
-    const response = await axios.post(APIUrl.createDetailAkun, detailAkun);
+    const response = await api.post(APIUrl.createDetailAkun(), detailAkun);
     return response.data; // Mengembalikan response dari server
   } catch (error) {
     console.error('Error creating akun detail:', error);
@@ -52,7 +52,7 @@ export const updateDetailAkun = async (userID, detailAkun) => {
     const apiUrl = APIUrl.updateDetailAkun(userID); // Ambil URL API
     console.log('API URL:', apiUrl); // Debug URL yang digunakan
 
-    const response = await axios.put(apiUrl, detailAkun); // Request ke API
+    const response = await api.put(apiUrl, detailAkun); // Request ke API
     return response.data; // Mengembalikan response dari server
   } catch (error) {
     console.error(`Error updating akun detail for user ID ${userID}:`, error);
@@ -63,7 +63,7 @@ export const updateDetailAkun = async (userID, detailAkun) => {
 // Fungsi untuk menghapus detail akun berdasarkan ID
 export const deleteDetailAkun = async (userID) => {
   try {
-    const response = await axios.delete(APIUrl.deleteDetailAkun(userID));
+    const response = await api.delete(APIUrl.deleteDetailAkun(userID));
     return response.data; // Mengembalikan response dari server
   } catch (error) {
     console.error(`Error deleting akun detail for user ID ${userID}:`, error);
@@ -76,7 +76,7 @@ export const getAllDetailAkun = async () => {
   try {
     const apiUrl = APIUrl.getAllDetailAkun(); // Ambil URL API
     console.log('API URL:', apiUrl); // Debug URL yang digunakan
-    const response = await axios.get(apiUrl);
+    const response = await api.get(apiUrl);
 
     // Ensure response.data is an array
     if (Array.isArray(response.data)) {

@@ -1,10 +1,10 @@
-import axios from 'axios';
-import userInfo from '../helpers/UserInfo';  // Mengimpor UserInfo.js
-import APIUrl from '../helpers/APIUrl';  // Mengimpor APIUrl.js
+import api from '@/services/helpers/api';
+import userInfo from '@/services/helpers/UserInfo';
+import APIUrl from '@/services/helpers/APIUrl';
 
 async function login(username, password) {
   try {
-    const response = await axios.post(APIUrl.AUTH, new URLSearchParams({
+    const response = await api.post(APIUrl.AUTH, new URLSearchParams({
       username: username,
       password: password
     }), {

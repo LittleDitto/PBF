@@ -1,7 +1,7 @@
-// import baseUrl from './api'; // Mengimpor baseUrl dari api.js
+import { baseURL } from './api'; // Mengimpor baseUrl dari api.js
 
 const APIUrl = {
-  AKUN: `http://127.0.0.1:8000/akun`, // URL dasar untuk endpoint akun
+  AKUN: `${baseURL}/akun`, // URL dasar untuk endpoint akun
   
   // Metode untuk URL spesifik akun
   getAkun(id) {
@@ -24,7 +24,7 @@ const APIUrl = {
     return `${this.AKUN}/delete/${id}`;
   },
   
-  LEVEL_AKSES: `http://127.0.0.1:8000/level-akses`, // URL dasar untuk endpoint level-akses
+  LEVEL_AKSES: `${baseURL}/level-akses`, // URL dasar untuk endpoint level-akses
   
   // Metode untuk URL spesifik level akses
   getLevelAkses(id) {
@@ -47,7 +47,7 @@ const APIUrl = {
     return `${this.LEVEL_AKSES}/delete/${id}`;
   },
   
-  DETAIL_AKUN: `http://127.0.0.1:8000/detail-akun`, // URL dasar untuk endpoint detail-akun
+  DETAIL_AKUN: `${baseURL}/detail-akun`, // URL dasar untuk endpoint detail-akun
   
   // Metode untuk URL spesifik detail akun
   getDetailAkun(id) {
@@ -70,7 +70,7 @@ const APIUrl = {
     return `${this.DETAIL_AKUN}/delete/${id}`;
   },
   
-  AUTH: `http://127.0.0.1:8000/auth/token`, // URL dasar untuk endpoint auth
+  AUTH: `${baseURL}/auth/token`, // URL dasar untuk endpoint auth
 };
 
 export default APIUrl;

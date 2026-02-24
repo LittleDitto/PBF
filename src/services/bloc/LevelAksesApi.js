@@ -1,5 +1,5 @@
-import axios from 'axios';
-import APIUrl from '@/services/helpers/APIUrl'; // Pastikan file ini merujuk ke lokasi yang tepat
+import api from '@/services/helpers/api';
+import APIUrl from '@/services/helpers/APIUrl';
 
 // Fungsi untuk mengambil level akses berdasarkan id_level_akses
 export const getLevelAkses = async (id_level_akses) => {
@@ -9,7 +9,7 @@ export const getLevelAkses = async (id_level_akses) => {
       console.error("ID Level Akses tidak ditemukan");
       throw new Error('ID Level Akses tidak ditemukan');
     }
-    const response = await axios.get(APIUrl.getLevelAkses(id_level_akses)); // Menggunakan id_level_akses langsung
+    const response = await api.get(APIUrl.getLevelAkses(id_level_akses)); // Menggunakan id_level_akses langsung
     return response.data; // Mengembalikan data level akses yang didapat dari server
   } catch (error) {
     console.error('Error fetching level akses:', error);
@@ -20,7 +20,7 @@ export const getLevelAkses = async (id_level_akses) => {
 // Fungsi untuk membuat level akses baru
 export const createLevelAkses = async (levelAkses) => {
   try {
-    const response = await axios.post(APIUrl.createLevelAkses(), levelAkses);
+    const response = await api.post(APIUrl.createLevelAkses(), levelAkses);
     return response.data; // Mengembalikan response dari server
   } catch (error) {
     console.error('Error creating level akses:', error);
@@ -32,7 +32,7 @@ export const createLevelAkses = async (levelAkses) => {
 export const updateLevelAkses = async (id_level_akses, levelAkses) => {
   try {
     // Panggil API untuk memperbarui level akses berdasarkan id_level_akses
-    const response = await axios.put(APIUrl.updateLevelAkses(id_level_akses), levelAkses);
+    const response = await api.put(APIUrl.updateLevel(id_level_akses), levelAkses);
     return response.data; // Mengembalikan response dari server
   } catch (error) {
     console.error('Error updating level akses:', error);
@@ -44,7 +44,7 @@ export const updateLevelAkses = async (id_level_akses, levelAkses) => {
 export const deleteLevelAkses = async (id_level_akses) => {
   try {
     // Panggil API untuk menghapus level akses berdasarkan id_level_akses
-    const response = await axios.delete(APIUrl.deleteLevelAkses(id_level_akses));
+    const response = await api.delete(APIUrl.deleteLevelAkses(id_level_akses));
     return response.data; // Mengembalikan response dari server
   } catch (error) {
     console.error('Error deleting level akses:', error);
@@ -55,7 +55,7 @@ export const deleteLevelAkses = async (id_level_akses) => {
 // Fungsi untuk mengambil semua level akses
 export const getAllLevelAkses = async () => {
   try {
-    const response = await axios.get(APIUrl.getAllLevelAkses());
+    const response = await api.get(APIUrl.getAllLevelAkses());
     return response.data; // Mengembalikan daftar level akses
   } catch (error) {
     console.error('Error fetching all level akses:', error);
