@@ -1,0 +1,420 @@
+/* ============================================
+   SHARED STYLES - Consistent across all pages
+   ============================================ */
+
+/* Page Container */
+.shared-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+}
+
+/* Header */
+.shared-header {
+  background-color: #1d4ed8;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.shared-header-title {
+  color: #ffffff;
+}
+
+/* Dropdown Container */
+.shared-dropdown-container {
+  position: relative;
+}
+
+/* Dropdown Button */
+.shared-dropdown-btn {
+  background-color: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 24px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.shared-dropdown-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Dropdown Menu */
+.shared-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  min-width: 180px;
+  overflow: hidden;
+  transform-origin: top right;
+  animation: shared-dropdown-appear 0.2s ease-out;
+}
+
+@keyframes shared-dropdown-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dropdown Item */
+.shared-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #1f2937;
+  font-size: 14px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.shared-dropdown-item:hover {
+  background-color: #0dcfedbc;
+  color: #1e3c7e;
+}
+
+/* Main Content Area */
+.shared-content {
+  padding: 24px;
+  display: flex;
+  flex: 1;
+  gap: 24px;
+}
+
+/* Card */
+.shared-card {
+  flex: 1;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.shared-card-body {
+  padding: 24px;
+}
+
+.shared-card-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: #1f2937;
+}
+
+/* Sidebar */
+.shared-sidebar {
+  width: 280px;
+  min-width: 250px;
+  max-width: 320px;
+  border: 2px solid #e5e7eb;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  background-color: #f9fafb;
+  position: sticky;
+  top: 16px;
+  align-self: flex-start;
+}
+
+.shared-sidebar-title {
+  color: #374151;
+  font-weight: bold;
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.shared-sidebar-content {
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Buttons */
+.shared-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.shared-btn-primary {
+  background-color: #1d4ed8;
+  color: white;
+}
+
+.shared-btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.shared-btn-secondary {
+  background-color: #6b7280;
+  color: white;
+}
+
+.shared-btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+.shared-btn-danger {
+  background-color: #ef4444;
+  color: white;
+}
+
+.shared-btn-danger:hover {
+  background-color: #dc2626;
+}
+
+.shared-btn-success {
+  background-color: #10b981;
+  color: white;
+}
+
+.shared-btn-success:hover {
+  background-color: #059669;
+}
+
+/* Form Elements */
+.shared-form-group {
+  margin-bottom: 16px;
+}
+
+.shared-form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+}
+
+.shared-form-input,
+.shared-form-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+}
+
+.shared-form-input:focus,
+.shared-form-select:focus {
+  outline: none;
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+}
+
+/* Feature Grid */
+.shared-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Feature Card */
+.shared-feature-card {
+  border: 2px solid #e5e7eb;
+  padding: 20px;
+  text-align: center;
+  color: #6b7280;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  background-color: white;
+}
+
+.shared-feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #1d4ed8;
+}
+
+/* Form Selection Buttons */
+.shared-form-selection {
+  margin-bottom: 24px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.shared-form-selection button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #1d4ed8;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.shared-form-selection button:hover {
+  background-color: #2563eb;
+}
+
+/* Form Card */
+.shared-form-card {
+  margin: 0 auto;
+  padding: 24px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+}
+
+.shared-form-card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.shared-form-card form label {
+  margin-top: 12px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.shared-form-card form input,
+.shared-form-card form select {
+  padding: 10px;
+  margin-top: 6px;
+  margin-bottom: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.shared-form-card form button {
+  padding: 12px;
+  background-color: #1d4ed8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 12px;
+  transition: background-color 0.3s ease;
+}
+
+.shared-form-card form button:hover {
+  background-color: #2563eb;
+}
+
+/* Account Item */
+.shared-account-item {
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shared-account-item:last-child {
+  border-bottom: none;
+}
+
+.shared-account-item p {
+  margin: 0;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.shared-account-item button {
+  padding: 8px 16px;
+  margin-left: 8px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.shared-account-item .edit-btn {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.shared-account-item .edit-btn:hover {
+  background-color: #2563eb;
+}
+
+.shared-account-item .delete-btn {
+  background-color: #ef4444;
+  color: white;
+}
+
+.shared-account-item .delete-btn:hover {
+  background-color: #dc2626;
+}
+
+/* Loading Indicator */
+.shared-loading {
+  padding: 20px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+/* Empty State */
+.shared-empty {
+  padding: 40px;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .shared-content {
+    flex-direction: column;
+  }
+  
+  .shared-sidebar {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    margin-top: 16px;
+  }
+  
+  .shared-features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .shared-header {
+    padding: 12px 16px;
+  }
+  
+  .shared-content {
+    padding: 16px;
+  }
+}

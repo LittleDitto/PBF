@@ -1,45 +1,45 @@
 <template>
-  <div class="app-container">
+  <div class="shared-page-container">
     <!-- Header -->
-    <div class="header">
-      <div>Menu</div>
-      <div class="dropdown-container">
-        <button @click="toggleDropdown" class="dropdown-btn">☰</button>
-        <div v-if="dropdownVisible" class="dropdown-menu">
-          <button @click="goToFeature('/Akun')" class="dropdown-item">Akun</button>
-          <button @click="goToAction('Another Action')" class="dropdown-item">Another</button>
-          <button @click="logout" class="dropdown-item">Logout</button>
+    <div class="shared-header">
+      <div class="shared-header-title">Menu</div>
+      <div class="shared-dropdown-container">
+        <button @click="toggleDropdown" class="shared-dropdown-btn">☰</button>
+        <div v-if="dropdownVisible" class="shared-dropdown-menu" ref="dropdownMenu">
+          <button @click="goToFeature('/Akun')" class="shared-dropdown-item">Akun</button>
+          <button @click="goToAction('Another Action')" class="shared-dropdown-item">Another</button>
+          <button @click="logout" class="shared-dropdown-item">Logout</button>
         </div>
       </div>
     </div>
 
     <!-- Main Content -->
-    <div class="content">
-      <div class="main-content">
-        <div class="form-selection">
+    <div class="shared-content">
+      <div class="shared-main-area">
+        <div class="shared-form-selection">
           <button @click="formType = 'create'">Create Akun</button>
           <button @click="formType = 'update'">Update Akun</button>
           <button @click="formType = 'read'">Read Akun</button>
         </div>
 
         <!-- Create Akun Form -->
-        <div v-if="formType === 'create'" class="form-card">
+        <div v-if="formType === 'create'" class="shared-form-card">
           <h2>Create Akun</h2>
           <form @submit.prevent="handleCreateAkun">
-            <label for="id_akun">ID Akun:</label>
+            <label>ID Akun:</label>
             <input type="text" v-model="akun.id_akun" required />
 
-            <label for="id_level_akses">Level Akses:</label>
-              <select v-model="akun.id_level_akses" required>
-                <option value="" disabled selected>Select level akses</option>
-                  <option v-for="level in levelAksesList" :key="level.id_level_akses" :value="level.id_level_akses">
-                    {{ level.hak_akses }} (Priority: {{ level.priority_akses }})
-                  </option>
-              </select>
-            <label for="username">Username:</label>
+            <label>Level Akses:</label>
+            <select v-model="akun.id_level_akses" required>
+              <option value="" disabled selected>Select level akses</option>
+              <option v-for="level in levelAksesList" :key="level.id_level_akses" :value="level.id_level_akses">
+                {{ level.hak_akses }} (Priority: {{ level.priority_akses }})
+              </option>
+            </select>
+            <label>Username:</label>
             <input type="text" v-model="akun.username" required />
 
-            <label for="password">Password:</label>
+            <label>Password:</label>
             <input type="password" v-model="akun.password" required />
 
             <button type="submit">Create</button>
@@ -47,39 +47,43 @@
         </div>
 
         <!-- Update Akun Form -->
-        <div v-if="formType === 'update'" class="form-card">
+        <div v-if="formType === 'update'" class="shared-form-card">
           <h2>Update Akun</h2>
           <form @submit.prevent="handleUpdateAkun">
-            <label for="id_akun">ID Akun:</label>
+            <label>ID Akun:</label>
             <input type="text" v-model="akun.id_akun" disabled />
-            <label for="username">Username:</label>
+            <label>Username:</label>
             <input type="text" v-model="akun.username" required />
-            <label for="password">Password:</label>
+            <label>Password:</label>
             <input type="password" v-model="akun.password" required />
             <button type="submit">Update</button>
           </form>
         </div>
 
         <!-- Read Akun -->
-        <div v-if="formType === 'read'" class="card">
-          <div v-if="akunList.length === 0">No accounts available.</div>
-          <div v-for="account in akunList" :key="account.id_akun">
-            <p>{{ account.username }}</p>
-            <button @click="editAkun(account.id_akun)">Edit</button>
-            <button @click="confirmDelete(account.id_akun)">Delete</button>
+        <div v-if="formType === 'read'" class="shared-card">
+          <div class="shared-card-body">
+            <div v-if="akunList.length === 0" class="shared-empty">No accounts available.</div>
+            <div v-for="account in akunList" :key="account.id_akun" class="shared-account-item">
+              <p>{{ account.username }}</p>
+              <div>
+                <button @click="editAkun(account.id_akun)" class="edit-btn">Edit</button>
+                <button @click="confirmDelete(account.id_akun)" class="delete-btn">Delete</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Sidebar (Status Pegawai) -->
-      <div class="sidebar">
-        <div>Status Pegawai</div>
-        <div v-if="loggedInUser">
+      <div class="shared-sidebar">
+        <div class="shared-sidebar-title">Status Pegawai</div>
+        <div class="shared-sidebar-content" v-if="loggedInUser">
           <strong>{{ loggedInUser.username }}</strong>
           <div>Hak Akses: {{ accessDetails.hak_akses || 'N/A' }}</div>
           <div>Priority Akses: {{ accessDetails.priority_akses || 'N/A' }}</div>
         </div>
-        <div v-else>
+        <div class="shared-sidebar-content" v-else>
           <span>Tidak ada pegawai yang login</span>
         </div>
       </div>
@@ -107,13 +111,31 @@ export default {
   methods: {
     toggleDropdown() {
       this.dropdownVisible = !this.dropdownVisible;
+      if (this.dropdownVisible) {
+        this.$nextTick(() => {
+          document.addEventListener('click', this.closeDropdownOutside);
+        });
+      }
+    },
+    closeDropdownOutside(event) {
+      const dropdownMenu = this.$refs.dropdownMenu;
+      if (dropdownMenu && !dropdownMenu.contains(event.target) && !event.target.closest('.shared-dropdown-btn')) {
+        this.dropdownVisible = false;
+        document.removeEventListener('click', this.closeDropdownOutside);
+      }
     },
     goToFeature(route) {
+      this.dropdownVisible = false;
       this.$router.push(route);
+    },
+    goToAction(action) {
+      console.log(`Action selected: ${action}`);
+      this.dropdownVisible = false;
     },
     logout() {
       userInfo.logout();
       this.loggedInUser = null;
+      this.dropdownVisible = false;
       this.$router.push('/');
     },
     async fetchLevelAksesList() {
@@ -154,7 +176,8 @@ export default {
           return;
         }
         const response = await createAkun(this.akun);
-        alert('Akun created successfully',response);
+        alert('Akun created successfully');
+        console.log('Akun created:', response);
         this.fetchAkunList();
         this.formType = '';
         this.akun = { id_akun: '', id_level_akses: '', username: '', password: '' };
@@ -177,7 +200,8 @@ export default {
     async handleUpdateAkun() {
       try {
         const response = await updateAkun(this.akun.id_akun, this.akun);
-        alert('Akun updated successfully',response);
+        alert('Akun updated successfully');
+        console.log('Akun updated:', response);
         this.fetchAkunList();
         this.formType = '';
       } catch (error) {
@@ -190,7 +214,7 @@ export default {
         alert('Akun deleted successfully'); 
         this.fetchAkunList();
       } catch (error) {
-        console.error(': Error deleting akun:', error); 
+        console.error('Error deleting akun:', error); 
         alert('Failed to delete akun');
       } 
     }, 
@@ -205,199 +229,19 @@ export default {
     await this.loadLoggedInUser(); 
     await this.fetchAkunList();
     await this.fetchLevelAksesList(); 
-  }, 
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.closeDropdownOutside);
+  },
 };
- </script>
+</script>
 
-  <style lang="css" scoped>
-/* App Container */
-.app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: #f9f9f9;
-  font-family: Arial, sans-serif;
-}
-
-/* Body */
-body {
-  margin: 0;
-  padding: 0;
-}
-
-/* Header */
-.header {
-  background-color: #1d4ed8;
-  color: #d1d5db;
-  font-size: 24px;
-  font-weight: bold;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Dropdown */
-.dropdown-container {
-  position: relative;
-}
-
-.dropdown-btn {
-  background-color: transparent;
-  border: none;
-  color: #d1d5db;
-  cursor: pointer;
-  font-size: 20px;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 40px;
-  right: 0;
-  background-color: white;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  min-width: 150px;
-  max-width: 200px;
-  display: block;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.dropdown-item {
-  display: block;
-  padding: 10px;
-  text-align: left;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.dropdown-item:hover {
-  background-color: #0dcfedbc;
-  color: #1e3c7e;
-}
-
-/* Main Content Area */
-.content {
-  display: flex;
+<style scoped>
+.shared-main-area {
   flex: 1;
-  flex-direction: row;
-  gap: 24px;
-  padding: 24px;
-}
-
-.main-content {
   background-color: rgb(243, 236, 227);
-  flex: 3;
   border: #2563eb;
   border-radius: 18px;
-}
-
-.form-selection {
-  margin-top: 15px;
-  margin-bottom: 24px;
-}
-button {
-  border-radius: 10px;
-  display: inline-block;
-  margin-right: 10px;
-}
-.form-card {
-  margin: 0 auto;
   padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 500px;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-form label {
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-form input {
-  padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-form button {
-  padding: 12px;
-  background-color: #1d4ed8;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
-
-form button:hover {
-  background-color: #2563eb;
-}
-
-/* Sidebar */
-.sidebar {
-  width: 25%;
-  margin-left: 24px;
-  padding: 12px;  /* Mengurangi padding */
-  border: 2px solid #d1d5db;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  position: sticky;
-  top: 16px;
-  right: 90px;
-  max-height: 200px; /* Menetapkan tinggi maksimal jika perlu */
-  overflow-y: auto; /* Menambahkan scroll jika kontennya melebihi tinggi */
-}
-
-.sidebar div:first-child {
-  color: #374151;
-  font-weight: bold;
-  margin-bottom: 8px;  /* Mengurangi margin bawah */
-  font-size: 16px;  /* Mengurangi ukuran font */
-}
-
-.sidebar div:last-child {
-  color: #6b7280;
-  font-size: 14px;  /* Mengurangi ukuran font */
-}
-
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-  .sidebar {
-    width: 100%;
-    margin-left: 0;
-    margin-top: 16px;
-  }
-
-  .content {
-    flex-direction: column;
-  }
-
-  .form-card {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }
 </style>
